@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               '${weekday.toUpperCase()}, ${today.day}',
                               style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color: Theme.of(context).colorScheme.onBackground.withOpacity(0.85),
                                     letterSpacing: 0.5,
                                   ),
                             ),
@@ -74,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               'Good ${today.hour < 12 ? 'morning' : today.hour < 18 ? 'afternoon' : 'evening'}!',
                               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.w800,
+                                    color: Theme.of(context).colorScheme.onBackground,
                                   ),
                             ),
                           ],
@@ -96,12 +97,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text(
                               'Streak Health',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    color: Theme.of(context).colorScheme.onBackground,
+                                  ),
                             ),
                             const Spacer(),
                             Text(
                               '${avg7Day.toStringAsFixed(0)}%',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.onBackground,
+                                  ),
                             ),
                           ],
                         ),
@@ -129,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ? 'Almost there. Hit one more habit today.'
                                   : 'Do one quick habit to boost your streak health.',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(context).colorScheme.onBackground.withOpacity(0.85),
                               ),
                         ),
                       ],
