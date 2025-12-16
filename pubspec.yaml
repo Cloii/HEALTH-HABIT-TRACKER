@@ -1,0 +1,40 @@
+name: health_habit_tracker
+description: A beautiful daily habit tracking app to build healthy habits
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  provider: ^6.1.1
+  
+  # Local Storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.2.2
+  
+  # Utilities
+  intl: ^0.18.1
+  uuid: ^4.2.2
+  fl_chart: ^0.66.2
+  
+  # Notifications - Removed for compatibility, using in-app reminders instead
+  
+  # UI
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.7
+
+flutter:
+  uses-material-design: true
+
