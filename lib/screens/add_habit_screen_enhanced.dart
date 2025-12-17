@@ -32,7 +32,7 @@ class _AddHabitScreenEnhancedState extends State<AddHabitScreenEnhanced> {
 
   // Common emoji suggestions
   final List<String> suggestedEmojis = [
-    '💧', '🏃', '📚', '🧘', '🍎', '💤', '✍️', '🎯',
+    '💧', '🏃', '📚', '🧘', '🎯', '💤', '✍️', '🎯',
     '💪', '🧠', '🌱', '🎨', '🎵', '📱', '☕', '🍽️',
   ];
 
@@ -168,9 +168,13 @@ class _AddHabitScreenEnhancedState extends State<AddHabitScreenEnhanced> {
             backgroundColor: Colors.orange,
           ),
         );
+        setState(() {
+          _isSaving = false;
+        });
         return;
       }
 
+      // Convert TimeOfDay to String format (HH:mm)
       final reminderTimeStr = _reminderEnabled && _reminderTime != null
           ? '${_reminderTime!.hour.toString().padLeft(2, '0')}:${_reminderTime!.minute.toString().padLeft(2, '0')}'
           : null;
@@ -192,18 +196,6 @@ class _AddHabitScreenEnhancedState extends State<AddHabitScreenEnhanced> {
           targetDurationMinutes: validTargetDuration,
         );
         await provider.updateHabit(updatedHabit);
-
-        // Update notification
-        if (_reminderEnabled && reminderTimeStr != null) {
-          await NotificationService.scheduleHabitReminder(
-            habitId: habit.id.hashCode,
-            habitName: updatedHabit.name,
-            habitIcon: updatedHabit.icon,
-            time: reminderTimeStr,
-          );
-        } else {
-          await NotificationService.cancelHabitReminder(habit.id.hashCode);
-        }
       } else {
         // Add new habit
         await provider.addHabit(
@@ -219,16 +211,6 @@ class _AddHabitScreenEnhancedState extends State<AddHabitScreenEnhanced> {
           hasTimer: _hasTimer,
           targetDurationMinutes: validTargetDuration,
         );
-        // Schedule notification for new habit
-        if (_reminderEnabled && reminderTimeStr != null) {
-          final newHabit = provider.habits.last;
-          await NotificationService.scheduleHabitReminder(
-            habitId: newHabit.id.hashCode,
-            habitName: newHabit.name,
-            habitIcon: newHabit.icon,
-            time: reminderTimeStr,
-          );
-        }
       }
 
       if (mounted) {
@@ -241,7 +223,6 @@ class _AddHabitScreenEnhancedState extends State<AddHabitScreenEnhanced> {
           ),
         );
         Navigator.pop(context);
-      } else {
       }
     } catch (e) {
       if (mounted) {
@@ -309,7 +290,6 @@ class _AddHabitScreenEnhancedState extends State<AddHabitScreenEnhanced> {
                     onChanged: (value) {
                       setState(() {});
                     },
-                    // Icon is optional - will default to 🎯 if empty
                   ),
                 ],
               ),
@@ -470,7 +450,6 @@ class _AddHabitScreenEnhancedState extends State<AddHabitScreenEnhanced> {
                 helperText: 'Leave empty for daily completion, or enter 1-7 (invalid entries are ignored)',
               ),
               keyboardType: TextInputType.number,
-              // Optional: invalid entries are silently ignored when saving
               validator: (_) => null,
             ),
 
@@ -617,4 +596,3 @@ class _AddHabitScreenEnhancedState extends State<AddHabitScreenEnhanced> {
     );
   }
 }
-

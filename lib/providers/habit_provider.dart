@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../models/habit.dart';
 import '../models/timer_session.dart';
 import '../services/database_service.dart';
+import '../services/notification_service.dart';
 import 'package:uuid/uuid.dart';
 
 /// Provider class for managing habit state
@@ -55,7 +57,7 @@ class HabitProvider with ChangeNotifier {
     required String icon,
     String? category,
     int? weeklyGoal,
-    String? reminderTime,
+    String? reminderTime, // Keep as String to match Habit model
     bool reminderEnabled = false,
     bool hasTimer = false,
     int? targetDurationMinutes,
@@ -64,19 +66,25 @@ class HabitProvider with ChangeNotifier {
       final habit = Habit(
         id: const Uuid().v4(),
         name: name,
-        description: description,
+        description: description ?? '',
         icon: icon,
         createdDate: DateTime.now(),
         category: category,
         weeklyGoal: weeklyGoal,
         reminderTime: reminderTime,
-        reminderEnabled: reminderEnabled, // This will be converted to non-null in constructor
+        reminderEnabled: reminderEnabled,
         hasTimer: hasTimer,
         targetDurationMinutes: targetDurationMinutes,
       );
 
       await DatabaseService.saveHabit(habit);
       _habits.add(habit);
+      
+      // Schedule notification if reminder is enabled and time is set
+      if ((habit.reminderEnabled ?? false) && habit.reminderTime != null) {
+        await NotificationService.scheduleHabitReminder(habit);
+      }
+      
       notifyListeners();
       debugPrint('Habit added: ${habit.name}, Total habits: ${_habits.length}');
     } catch (e) {
@@ -93,6 +101,15 @@ class HabitProvider with ChangeNotifier {
       final index = _habits.indexWhere((h) => h.id == habit.id);
       if (index != -1) {
         _habits[index] = habit;
+        
+        // Update notification based on reminder settings
+        if ((habit.reminderEnabled ?? false) && habit.reminderTime != null) {
+          await NotificationService.scheduleHabitReminder(habit);
+        } else {
+          // Cancel notification if reminder is disabled
+          await NotificationService.cancelHabitReminder(habit.id);
+        }
+        
         notifyListeners();
         debugPrint('Habit updated: ${habit.name}');
       } else {
@@ -107,6 +124,9 @@ class HabitProvider with ChangeNotifier {
   /// Delete a habit
   Future<void> deleteHabit(String habitId) async {
     try {
+      // Cancel notification first
+      await NotificationService.cancelHabitReminder(habitId);
+      
       await DatabaseService.deleteHabit(habitId);
       final initialLength = _habits.length;
       _habits.removeWhere((habit) => habit.id == habitId);
@@ -179,4 +199,3 @@ class HabitProvider with ChangeNotifier {
     }
   }
 }
-

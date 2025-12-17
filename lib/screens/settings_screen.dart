@@ -4,6 +4,7 @@ import '../providers/habit_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/profile_provider.dart';
 import 'export_screen.dart';
+import '../services/notification_service.dart'; // TESTING: Remove after testing notifications
 
 /// Settings screen with app options
 class SettingsScreen extends StatelessWidget {
@@ -58,6 +59,89 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
+
+          const SizedBox(height: 16),
+
+          // TESTING: Remove this entire notification test section after testing
+          Card(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    '🔔 Notification Testing',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                  ),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.notifications_active, color: Colors.orange),
+                  title: const Text('Test Notification'),
+                  subtitle: const Text('Send a test notification now'),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () async {
+                    await NotificationService.showImmediateNotification(
+                      title: '🎉 Test Notification',
+                      body: 'Your notifications are working perfectly!',
+                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Test notification sent! Check your notification bar.'),
+                          duration: Duration(seconds: 3),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.list_alt, color: Colors.orange),
+                  title: const Text('View Pending Notifications'),
+                  subtitle: const Text('See all scheduled notifications'),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () async {
+                    final pending = await NotificationService.getPendingNotifications();
+                    if (context.mounted) {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Pending Notifications'),
+                          content: pending.isEmpty
+                              ? const Text('No pending notifications')
+                              : SizedBox(
+                                  width: double.maxFinite,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: pending.length,
+                                    itemBuilder: (ctx, i) {
+                                      final notif = pending[i];
+                                      return ListTile(
+                                        title: Text(notif.title ?? 'No title'),
+                                        subtitle: Text(notif.body ?? 'No body'),
+                                        dense: true,
+                                      );
+                                    },
+                                  ),
+                                ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('Close'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          // END TESTING
 
           const SizedBox(height: 16),
 
@@ -129,7 +213,7 @@ class SettingsScreen extends StatelessWidget {
                 const ListTile(
                   leading: Icon(Icons.info_outline),
                   title: Text('App Version'),
-                  subtitle: Text('1.0.0'),
+                  subtitle: Text('1.0.2 (future updates soon!)'),
                 ),
                 ListTile(
                   leading: const Icon(Icons.description),
@@ -145,7 +229,7 @@ class SettingsScreen extends StatelessWidget {
                         const Padding(
                           padding: EdgeInsets.only(top: 16),
                           child: Text(
-                            'A simple and beautiful habit tracking app to help you build healthy daily habits.',
+                            'A simple and beautiful habit tracking app to help you build healthy daily habits.  -made by Bil and Mark :)',
                           ),
                         ),
                       ],
@@ -426,4 +510,3 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 }
-
