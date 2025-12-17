@@ -188,7 +188,7 @@ class _MainScreenState extends State<MainScreen> {
           NavigationDestination(
             icon: Icon(Icons.emoji_events_outlined),
             selectedIcon: Icon(Icons.emoji_events),
-            label: 'Achievement',
+            label: 'Awards',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
