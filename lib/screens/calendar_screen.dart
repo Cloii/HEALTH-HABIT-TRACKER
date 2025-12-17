@@ -241,13 +241,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
           // Legend
           Container(
             margin: const EdgeInsets.only(top: 16),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
               children: [
                 _buildLegendItem(
                   context,
@@ -257,7 +259,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
                 _buildLegendItem(
                   context,
-                  'Completed',
+                  'Done',
                   Colors.green.withValues(alpha: 0.3),
                 ),
                 _buildLegendItem(
@@ -267,7 +269,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
                 _buildLegendItem(
                   context,
-                  'Not completed',
+                  'Pending',
                   Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                 ),
               ],
